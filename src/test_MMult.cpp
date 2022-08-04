@@ -8,7 +8,11 @@
 #include <cublas_v2.h>
 #include <cuda_runtime.h>
 
-void REF_MMult(int, int, int, float *, int, float *, int, float *, int);
+void REF_MMult(int m, int n, int k,
+               float *a, int lda,
+               float *b, int ldb,
+               float *c, int ldc);
+
 void MY_MMult(cublasHandle_t, int, int, int, float *, int, float *, int,
               float *, int);
 void copy_matrix(int, int, float *, int, float *, int);
