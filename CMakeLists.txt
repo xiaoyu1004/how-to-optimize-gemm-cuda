@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 if(NOT DEFINED CMAKE_CUDA_ARCHITECTURES)
-    set(CMAKE_CUDA_ARCHITECTURES 50)
+    set(CMAKE_CUDA_ARCHITECTURES 75)
 endif()
 
 project(how-to-optimize-gemm LANGUAGES CXX CUDA)

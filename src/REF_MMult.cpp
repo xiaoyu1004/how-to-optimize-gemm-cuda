@@ -7,7 +7,9 @@
 #define B(i, j) b[(i)*ldb + (j)]
 #define C(i, j) c[(i)*ldc + (j)]
 
-/* Routine for computing C = A * B + C */
+#define nc 256
+#define kc 128
+
 void REF_MMult(int m, int n, int k,
                float *a, int lda,
                float *b, int ldb,
@@ -47,3 +49,17 @@ void REF_MMult(int m, int n, int k,
         }
     }
 }
+
+// void REF_MMult(int m, int n, int k,
+//                float *a, int lda,
+//                float *b, int ldb,
+//                float *c, int ldc)
+// {
+//     for (int p = 0; p < k; p += kc)
+//     {
+//         for (int j = 0; j < n; j += nc)
+//         {
+
+//         }
+//     }
+// }

@@ -6,7 +6,7 @@ set(cuda_srcs compare_matrices.cpp
               REF_MMult.cpp
               test_MMult.cpp)
 
-list(APPEND cuda_srcs MMult_cuda_12.cu)
+list(APPEND cuda_srcs MMult_cuda_2.cu)
 
 add_executable(MMult_cuda ${cuda_srcs})
-target_link_libraries(MMult_cuda PRIVATE cublas)
+target_link_libraries(MMult_cuda PRIVATE cudart cublas)

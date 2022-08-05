@@ -29,7 +29,6 @@ __global__ void sgemm(int m, int n, int k, float *a, int lda, float *b, int ldb,
 void MY_MMult(cublasHandle_t handle, int m, int n, int k, float *d_A, int lda,
               float *d_B, int ldb, float *d_C, int ldc)
 {
-
     constexpr int BLOCK = 16;
     // subm, subn, subk
     dim3 block(BLOCK, BLOCK);
