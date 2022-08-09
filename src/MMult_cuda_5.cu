@@ -36,8 +36,10 @@ __global__ void sgemm(int m, int n, int k, float *a, int lda, float *b, int ldb,
     for (float *a_ptr = begin_a, *b_ptr = begin_b; a_ptr < end_a;
          a_ptr += STEP, b_ptr += STEP * n)
     {
-        __shared__ __align__(16 * 1024) float ashare[STEP][STEP];
-        __shared__ __align__(16 * 1024) float bshare[STEP][STEP];
+        __shared__ float ashare[STEP][STEP];
+        __shared__ float bshare[STEP][STEP];
+        // __shared__ __align__(16 * 1024) float ashare[STEP][STEP];
+        // __shared__ __align__(16 * 1024) float bshare[STEP][STEP];
 
         for (int i = 0; i < STRIDE; ++i)
         {
@@ -76,9 +78,8 @@ __global__ void sgemm(int m, int n, int k, float *a, int lda, float *b, int ldb,
 void MY_MMult(cublasHandle_t handle, int m, int n, int k, float *d_A, int lda,
               float *d_B, int ldb, float *d_C, int ldc)
 {
-
     constexpr int BLOCK = 8;
-    constexpr int STRIDE = 4; // every thread calc STRIDExSTRIDE result
+    constexpr int STRIDE = 4; // every thread calc STRIDE x STRIDE result
     dim3 block(BLOCK, BLOCK);
     dim3 grid((m + BLOCK - 1) / BLOCK / STRIDE, (n + BLOCK - 1) / BLOCK / STRIDE);
 

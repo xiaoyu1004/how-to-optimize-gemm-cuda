@@ -13,8 +13,8 @@ template <int BLOCK>
 __global__ void sgemm(int m, int n, int k, float *a, int lda, float *b, int ldb,
                       float *c, int ldc)
 {
-    int _m = blockIdx.x * BLOCK + threadIdx.x;
-    int _n = blockIdx.y * BLOCK + threadIdx.y;
+    int _m = blockIdx.y * BLOCK + threadIdx.y;
+    int _n = blockIdx.x * BLOCK + threadIdx.x;
     if (_m < m && _n < n)
     {
         float sum = 0.f;
@@ -32,7 +32,7 @@ void MY_MMult(cublasHandle_t handle, int m, int n, int k, float *d_A, int lda,
     constexpr int BLOCK = 16;
     // subm, subn, subk
     dim3 block(BLOCK, BLOCK);
-    dim3 grid((m + BLOCK - 1) / BLOCK, (n + BLOCK - 1) / BLOCK);
+    dim3 grid((n + BLOCK - 1) / BLOCK, (m + BLOCK - 1) / BLOCK);
 
     sgemm<BLOCK><<<grid, block>>>(m, n, k, d_A, lda, d_B, ldb, d_C, ldc);
 }

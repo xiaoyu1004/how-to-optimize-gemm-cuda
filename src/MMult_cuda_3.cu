@@ -18,8 +18,8 @@ __global__ void sgemm(int m, int n, int k, float *a, int lda, float *b, int ldb,
     const int bx = blockIdx.x;
     const int by = blockIdx.y;
 
-    float *begin_a = a + bx * BLOCK * k;
-    float *begin_b = b + by * BLOCK;
+    float *begin_a = a + by * BLOCK * k;
+    float *begin_b = b + bx * BLOCK;
     float *end_a = begin_a + k;
 
     float sum = 0.f;
@@ -48,7 +48,7 @@ void MY_MMult(cublasHandle_t handle, int m, int n, int k, float *d_A, int lda,
 {
     constexpr int BLOCK = 16;
     dim3 block(BLOCK, BLOCK);
-    dim3 grid((m + BLOCK - 1) / BLOCK, (n + BLOCK - 1) / BLOCK);
+    dim3 grid((n + BLOCK - 1) / BLOCK, (m + BLOCK - 1) / BLOCK);
 
     sgemm<BLOCK><<<grid, block>>>(m, n, k, d_A, lda, d_B, ldb, d_C, ldc);
 }
