@@ -8,7 +8,7 @@
 #include <cublas_v2.h>
 #include <cuda_runtime.h>
 
-void REF_MMult(int m, int n, int k,
+void REF_MMult(cublasHandle_t handle, int m, int n, int k,
                float *a, int lda,
                float *b, int ldb,
                float *c, int ldc);
@@ -77,7 +77,7 @@ int main()
         const size_t mem_size_C = ldc * n * sizeof(float);
         a = (float *)malloc(mem_size_A);
         b = (float *)malloc(mem_size_B);
-        c = (float *)malloc(mem_size_C);
+        // c = (float *)malloc(mem_size_C);
         cold = (float *)malloc(mem_size_C);
         cref = (float *)malloc(mem_size_C);
 
@@ -89,18 +89,18 @@ int main()
         memset(cref, 0, mem_size_C);
 
         /* Init device matrix*/
-        float *d_A, *d_B, *d_C;
+        float *d_A, *d_B, *d_ref_C, *d_C;
         checkCudaErrors(cudaMalloc((void **)&d_A, mem_size_A));
         checkCudaErrors(cudaMalloc((void **)&d_B, mem_size_B));
         checkCudaErrors(cudaMemcpy(d_A, a, mem_size_A, cudaMemcpyHostToDevice));
         checkCudaErrors(cudaMemcpy(d_B, b, mem_size_B, cudaMemcpyHostToDevice));
+        checkCudaErrors(cudaMalloc((void **)&d_ref_C, mem_size_C));
         checkCudaErrors(cudaMalloc((void **)&d_C, mem_size_C));
 
         /* Run the reference implementation so the answers can be compared */
         // printf( "init\n");
 
-        REF_MMult(m, n, k, a, lda, b, ldb, cref, ldc);
-        // printf( "benchmark\n");
+        REF_MMult(handle, m, n, k, d_A, lda, d_B, ldb, d_ref_C, ldc);
 
         // Record the start event
         checkCudaErrors(cudaEventRecord(start, NULL));
@@ -110,8 +110,6 @@ int main()
             /* Time your implementation */
             MY_MMult(handle, m, n, k, d_A, lda, d_B, ldb, d_C, ldc);
         }
-
-        // printf( "mymmult\n");
 
         // Record the stop event
         checkCudaErrors(cudaEventRecord(stop, NULL));
@@ -128,6 +126,7 @@ int main()
 
         // copy result from device to host
         checkCudaErrors(cudaMemcpy(cold, d_C, mem_size_C, cudaMemcpyDeviceToHost));
+        checkCudaErrors(cudaMemcpy(cref, d_ref_C, mem_size_C, cudaMemcpyDeviceToHost));
 
         diff = compare_matrices(m, n, cold, ldc, cref, ldc);
         if (diff > 0.5f || diff < -0.5f)
@@ -139,7 +138,7 @@ int main()
 
         free(a);
         free(b);
-        free(c);
+        // free(c);
         free(cold);
         free(cref);
 

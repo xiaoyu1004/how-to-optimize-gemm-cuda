@@ -97,7 +97,6 @@ __global__ __launch_bounds__(256, 2) void sgemm_128x128x8(int m, int n, int k,
                                                           const float *b,
                                                           float *c)
 {
-
     __shared__ __align__(
         16 * 1024) char smem[24 * 1024]; // 16KB shared memory for buffer
 
